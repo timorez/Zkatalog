@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 <title>Z.Каталог - Ноутбуки</title>
-<link href="style.css" rel="stylesheet">
+<link href="static/style.css" rel="stylesheet">
 
 
 </head>
@@ -15,12 +15,11 @@
   <img src="img/оформление/второй.jpg" alt="">
 </header>
 <nav>
-  <a href="index.html">О НАС</a>
-  <a href="clothing.html">НОУТБУКИ</a>
-  <a href="обувь.html">ТЕЛЕФОНЫ</a>
-  <a href="цацки.html">ТЕЛЕВИЗОРЫ</a>
-  
-  <a href="факва.html">АКСЕССУАРЫ</a>
+  <a href="/about">О НАС</a>
+	<a href="/laptops">НОУТБУКИ</a>
+	<a href="/phones">ТЕЛЕФОНЫ</a>
+	<a href="/TVs">ТЕЛЕВИЗОРЫ</a>
+	<a href="/acs">АКСЕССУАРЫ</a>
 </nav>
 <main>
   
@@ -32,8 +31,8 @@
     </div>
   </div>
   <div class="product-title">
-    <a href="">название</a>
-    <span class="product-price">характеристика</span>
+    <a href="">{{ name_one }}</a>
+    <span class="product-price">{{ price_one }}</span>
   </div>
 </div>
 <div class="product-wrap">
@@ -44,8 +43,8 @@
     </div>
   </div>
   <div class="product-title">
-    <a href="">название</a>
-    <span class="product-price">характеристика</span>
+    <a href="">{{ name_two }}</a>
+    <span class="product-price">{{ price_two }}</span>
   </div>
 </div>
 <div class="product-wrap">
@@ -56,8 +55,8 @@
     </div>
   </div>
   <div class="product-title">
-    <a href="">название</a>
-    <span class="product-price">характеристика</span>
+    <a href="">{{ name_three }}</a>
+    <span class="product-price">{{ price_three }}</span>
   </div>
 </div>
 </main>
