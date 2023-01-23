@@ -61,7 +61,7 @@ def laptops():
 
 @app.route('/phones')
 def phones():
-    price_one = AW.get_price()
+    price_one = AW.get_price() + 'р'
     name_one = AW.get_name()
     url_one = str(AW.get_img())
     print(url_one)
