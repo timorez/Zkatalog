@@ -20,10 +20,28 @@ class Citilink:
         name = (str(name).split('\n'))[-2]
         return name.strip()
 
+    def get_img(self):
+        img = str(self.data.find('img')['src'])
+        return img
+
+
+class AppleWave(Citilink):
+    def get_price(self):
+        price = self.data.find('bdi')
+        price = str(price).split()
+        res = price[0][5::] + price[1]
+        return res
+
+    def get_name(self):
+        name = str(self.data.find('h1').text)
+        return name
+
 
 app = Flask(__name__)
 url = 'https://www.citilink.ru/product/noutbuk-huawei-matebook-d-i3-1115g4-8gb-ssd256gb-15-6-ips-fhd-w11-grey-1774325/'
+url1 = 'https://applewave.ru/product/apple-iphone-11-128gb-chyornyj/?utm-sourse=m15ekat'
 Ct = Citilink(url)
+AW = AppleWave(url1)
 
 
 @app.route('/')
@@ -33,13 +51,23 @@ def index():
 
 @app.route('/laptops')
 def laptops():
-    return render_template('template.html', price_one=(Ct.get_price() + 'р'),
-                           name_one=Ct.get_name())
+    price_one = Ct.get_price() + 'р'
+    name_one = Ct.get_name()
+    url_one = str(Ct.get_img())
+    print(url_one)
+    return render_template('template.html', price_one=price_one,
+                           name_one=name_one, url_one='')
 
 
 @app.route('/phones')
 def phones():
-    return render_template('template.html', name_one='12312')
+    price_one = AW.get_price()
+    name_one = AW.get_name()
+    url_one = str(AW.get_img())
+    print(url_one)
+    return render_template('template.html', price_one=price_one,
+                           name_one=name_one,
+                           url_one=url_one)
 
 
 @app.route('/TVs')
