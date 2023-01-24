@@ -2,13 +2,17 @@ from flask import Flask
 from flask import render_template
 from bs4 import BeautifulSoup as bs
 import requests
+import sqlite3
 
 
 class Citilink:
-    def __init__(self, url):
-        self.url = url
-        self.data = bs((requests.get(self.url)).text, 'html.parser')
-        self.code = requests.get(url)
+    def __init__(self, name):
+        self.name = name
+        con = sqlite3.connect('ZkatalogDB.sqlite')
+        self.cur = con.cursor()
+        self.url = list(self.cur.execute(f"""SELECT url_Ct FROM goods WHERE name = ?""", (str(name), )))
+        self.data = bs((requests.get(self.url[0][0])).text, 'html.parser')
+        self.code = requests.get(self.url[0][0])
 
     def get_price(self):
         price = self.data.find('span', class_='ProductPrice__price ProductPagePriceSection__default-price__price')
@@ -26,9 +30,17 @@ class Citilink:
 
 
 class AppleWave(Citilink):
+    def __init__(self, name):
+        Citilink.__init__(self, name)
+        self.url = list(self.cur.execute(f"""SELECT url_AW FROM goods WHERE name = ?""", (str(name), )))
+        self.data = bs((requests.get(self.url[0][0])).text, 'html.parser')
+        print(self.data)
+
     def get_price(self):
         price = self.data.find('bdi')
+        print(price)
         price = str(price).split()
+        print(price)
         res = price[0][5::] + price[1]
         return res
 
@@ -38,10 +50,9 @@ class AppleWave(Citilink):
 
 
 app = Flask(__name__)
-url = 'https://www.citilink.ru/product/noutbuk-huawei-matebook-d-i3-1115g4-8gb-ssd256gb-15-6-ips-fhd-w11-grey-1774325/'
-url1 = 'https://applewave.ru/product/apple-iphone-11-128gb-chyornyj/?utm-sourse=m15ekat'
-Ct = Citilink(url)
-AW = AppleWave(url1)
+name1 = 'phone1'
+Ct = Citilink(name1)
+AW = AppleWave(name1)
 
 
 @app.route('/')
@@ -56,7 +67,7 @@ def laptops():
     url_one = str(Ct.get_img())
     print(url_one)
     return render_template('template.html', price_one=price_one,
-                           name_one=name_one, url_one='')
+                           name_one=name_one, url_one=url_one)
 
 
 @app.route('/phones')
@@ -72,11 +83,6 @@ def phones():
 
 @app.route('/TVs')
 def TVs():
-    return render_template('template.html', name_one='12312')
-
-
-@app.route('/acs')
-def acs():
     return render_template('template.html', name_one='12312')
 
 
