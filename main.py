@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from bs4 import BeautifulSoup as bs
+from time import sleep
 import requests
 import sqlite3
 
@@ -27,7 +28,7 @@ class Citilink:
         if name is not None:
             name = (str(name).split('\n'))[-2]
         else:
-            name = 'Сайт магазина не отвечает. Попробуйте позже'
+            name = 'Сайт магазина не отвечает.'
         return name.strip()
 
     def get_img(self):
@@ -56,27 +57,43 @@ class AppleWave(Citilink):
         return name
 
 
+class tm24(Citilink):
+    def __init__(self, name):
+        Citilink.__init__(self, name)
+        self.url = list(self.cur.execute(f"""SELECT url_TM FROM goods WHERE name = ?""", (str(name), )))
+        self.data = bs((requests.get(self.url[0][0])).text, 'html.parser')
+
+    def get_price(self):
+        price = self.data.find('div', class_='price-values').text
+        return price.strip()
+
+
 app = Flask(__name__)
 Ctl1 = Citilink('lap1')
-AWl1 = AppleWave('lap1')
+Tml1 = AppleWave('lap1')
 Ctl2 = Citilink('lap2')
-AWl2 = AppleWave('lap2')
+Tml2 = AppleWave('lap2')
 Ctl3 = Citilink('lap3')
-AWl3 = AppleWave('lap3')
+Tml3 = AppleWave('lap3')
+sleep(30)
 
 Ctp1 = Citilink('phone1')
 AWp1 = AppleWave('phone1')
+Tmp1 = tm24('phone1')
 Ctp2 = Citilink('phone2')
 AWp2 = AppleWave('phone2')
+Tmp2 = tm24('phone1')
 Ctp3 = Citilink('phone3')
 AWp3 = AppleWave('phone3')
+Tmp3 = tm24('phone1')
+sleep(30)
 
 Ctt1 = Citilink('TV1')
-AWt1 = AppleWave('TV1')
+Tmt1 = tm24('TV1')
 Ctt2 = Citilink('TV2')
-AWt2 = AppleWave('TV2')
+Tmt2 = tm24('TV2')
 Ctt3 = Citilink('TV3')
-AWt3 = AppleWave('TV3')
+Tmt3 = tm24('TV3')
 
 flag = 0
 
@@ -136,8 +153,8 @@ def TVs():
     url_one = str(Ctt1.get_img())
     name_two = Ctt2.get_name()
     url_two = str(Ctt2.get_img())
-    name_three = Ctt3.get_name()
-    url_three = str(Ctt3.get_img())
+    name_three = Ctt2.get_name()
+    url_three = str(Ctt2.get_img())
     return render_template('template.html',
                            name_one=name_one,
                            url_one=url_one,
@@ -152,18 +169,18 @@ def TVs():
 def good1():
     if flag == 1:
         name = Ctl1.get_name()
-        shop_one = 'Citilink ' + Ctl1.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWl1.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctl1.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tml1.get_price() + ' Р'
         shop_three = ''
     elif flag == 2:
-        name = Ctl1.get_name()
-        shop_one = 'Citilink ' + Ctp1.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWp1.get_price() + 'р'
-        shop_three = ''
+        name = AWp1.get_name()
+        shop_one = 'citilink.ru ' + Ctp1.get_price() + ' Р'
+        shop_two = 'applewave.ru ' + AWp1.get_price() + ' Р'
+        shop_three = 'telemarket24.ru ' + str(Tmp1.get_price())
     else:
         name = Ctt1.get_name()
-        shop_one = 'Citilink ' + Ctt1.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWt1.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctt1.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tmt1.get_price() + ' Р'
         shop_three = ''
     return render_template('good.html',
                            name=name,
@@ -176,18 +193,18 @@ def good1():
 def good2():
     if flag == 1:
         name = Ctl2.get_name()
-        shop_one = 'Citilink ' + Ctl2.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWl2.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctl2.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tml2.get_price() + ' Р'
         shop_three = ''
     elif flag == 2:
-        name = Ctl2.get_name()
-        shop_one = 'Citilink ' + Ctp2.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWp2.get_price() + 'р'
-        shop_three = ''
+        name = AWp2.get_name()
+        shop_one = 'citilink.ru ' + Ctp2.get_price() + ' Р'
+        shop_two = 'applewave.ru ' + AWp2.get_price() + ' Р'
+        shop_three = 'telemarket24.ru ' + str(Tmp2.get_price())
     else:
         name = Ctt2.get_name()
-        shop_one = 'Citilink ' + Ctt2.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWt2.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctt2.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tmt2.get_price() + ' Р'
         shop_three = ''
     return render_template('good.html',
                            name=name,
@@ -200,18 +217,18 @@ def good2():
 def good3():
     if flag == 1:
         name = Ctl3.get_name()
-        shop_one = 'Citilink ' + Ctl3.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWl3.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctl3.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tml3.get_price() + ' Р'
         shop_three = ''
     elif flag == 2:
-        name = Ctl3.get_name()
-        shop_one = 'Citilink ' + Ctp3.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWp3.get_price() + 'р'
-        shop_three = ''
+        name = AWp3.get_name()
+        shop_one = 'citilink.ru ' + Ctp3.get_price() + ' Р'
+        shop_two = 'applewave.ru ' + AWp3.get_price() + ' Р'
+        shop_three = 'telemarket24.ru ' + str(Tmp3.get_price())
     else:
         name = Ctt3.get_name()
-        shop_one = 'Citilink ' + Ctt3.get_price() + 'р'
-        shop_two = 'AppleWave ' + AWt3.get_price() + 'р'
+        shop_one = 'citilink.ru ' + Ctt3.get_price() + ' Р'
+        shop_two = 'telemarket24.ru ' + Tmt3.get_price() + ' Р'
         shop_three = ''
     return render_template('good.html',
                            name=name,
