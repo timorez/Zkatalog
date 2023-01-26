@@ -73,7 +73,6 @@ class tm24(Citilink):
 
 
 app = Flask(__name__)
-sleep(120)
 Ctl1 = Citilink('lap1')
 sleep(30)
 Tml1 = AppleWave('lap1')
@@ -83,7 +82,7 @@ Tml2 = AppleWave('lap2')
 Ctl3 = Citilink('lap3')
 sleep(30)
 Tml3 = AppleWave('lap3')
-sleep(120)
+sleep(60)
 
 Ctp1 = Citilink('phone1')
 sleep(30)
@@ -97,7 +96,7 @@ Ctp3 = Citilink('phone3')
 sleep(30)
 AWp3 = AppleWave('phone3')
 Tmp3 = tm24('phone1')
-sleep(120)
+sleep(60)
 
 Ctt1 = Citilink('TV1')
 sleep(30)
@@ -271,4 +270,4 @@ def good3():
 
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=4567, host='0.0.0.0')
